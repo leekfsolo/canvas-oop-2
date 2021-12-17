@@ -1,18 +1,17 @@
 import React, { Component } from "react";
 import { Group } from "react-konva";
 import Toolbar from "../shapes/Toolbar";
-import Connector from "./Connector";
 import Events from "../Utils/EventHandling";
-// import Events from "../Utils/EventEmitter";
 
 class Shapes extends Component {
 	constructor() {
 		super();
 		this.state = {
 			isActive: false,
-			connectors: []
+			connectors: [],
 		};
 		this.node = null;
+		this.event = Events;
 	}
 
 	getX() {
@@ -23,15 +22,8 @@ class Shapes extends Component {
 		return this.node.attrs.y;
 	}
 
-	onChange() {
-		const event = new Events();
-		event.addListener('change', (arg) => console.log(arg));
-		event.onShapePositionChange();
-	}
-
 	addConnector(id, from, to) {
-		const connector = <Connector data={{ id, from, to }} stage={this.props.stage} key={Math.random().toString()} />;
-		this.props.generateConnectors(connector);
+		this.props.generateConnectors({ id, from, to });
 
 		const toNode = this.props.stage.current.find('#' + to)[0];
 
@@ -67,8 +59,11 @@ class Shapes extends Component {
 				y: pos.y - size.y / 2
 			});
 			group.startDrag();
+		});
+
+		group.on('dragmove', () => {
 			if (this.node.attrs.connectors.length > 0) {
-				this.onChange();
+				this.event.emit('onShapePositionChange', this);
 			}
 		});
 

@@ -7,6 +7,7 @@ import Navbar from "./Prototype/Navbar";
 import Button from "./UI/Button";
 import RectShape from "./shapes/RectShape";
 import CircleShape from "./shapes/CircleShape";
+import Connector from "./Prototype/Connector";
 
 const App = () => {
   const [shapes, setShapes] = useState([]);
@@ -15,8 +16,14 @@ const App = () => {
   const stageRef = useRef();
 
   const generateConnectors = (props) => {
+    const { id, from, to } = props;
+    const insertedConnector = <Connector
+      data={{ id, from, to }}
+      stage={stageRef}
+      key={Math.random().toString()}
+    />;
     setConnectors(items => {
-      return [...items, props];
+      return [...items, insertedConnector];
     });
   };
 

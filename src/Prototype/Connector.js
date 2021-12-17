@@ -1,15 +1,14 @@
-import { Component } from "react";
 import { Arrow } from "react-konva";
-import aggregation from "../Prototype/aggregation";
-import Data from "../Prototype/data";
+import Shapes from "./Shapes";
+import Events from "../Utils/EventHandling";
 
-class Connector extends aggregation(Component, Data) {
+class Connector extends Shapes {
 	getConnectorPoints(from, to, fromType, toType) {
 		const dx = to.x - from.x;
 		const dy = to.y - from.y;
 		let angle = Math.atan2(-dy, dx);
 
-		const radius = this.getRadius();
+		const radius = 40;
 		const fromOffset = fromType ? 0 : radius;
 		const toOffset = toType ? 0 : radius;
 
@@ -21,9 +20,9 @@ class Connector extends aggregation(Component, Data) {
 		];
 	}
 
-	updateObjects() {
+	updateObjects(data = this.props.data) {
 		const stage = this.props.stage.current;
-		const { id, from, to } = this.props.data;
+		const { id, from, to } = data;
 
 		const arrow = stage.findOne('#' + id);
 
@@ -39,38 +38,14 @@ class Connector extends aggregation(Component, Data) {
 
 	componentDidMount() {
 		this.updateObjects();
-		const stage = this.props.stage.current;
-		const groups = stage.find('.group-shape');
-		groups.forEach(group => {
-			group.on('dragmove', () => {
-				this.updateObjects();
-			});
+		Events.addListener('onShapePositionChange', arg => {
+			const connectors = arg.node.attrs.connectors;
+			connectors.forEach(connector => this.updateObjects(connector));
 		});
 	}
 
-	componentDidUpdate(prevProps) {
-		const {
-			connectors: prevConnectors,
-			shapes: prevShapes
-		} = prevProps;
-		const {
-			connectors: thisConnectors,
-			shapes: thisShapes
-		} = this.props;
-
-		if (thisConnectors.length !== prevConnectors.length || thisShapes.length !== prevShapes.length) {
-			this.updateObjects();
-			const stage = this.props.stage.current;
-			const groups = stage.find('.group-shape');
-			groups.forEach(group => {
-				group.on('dragmove', () => {
-					this.updateObjects();
-				});
-			});
-			if (this.arrowNode) {
-				this.arrowNode.clone().cache();
-			}
-		}
+	componentWillUnmount() {
+		Events.removeCurrentListener();
 	}
 
 	render() {

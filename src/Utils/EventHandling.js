@@ -1,9 +1,5 @@
 import { EventEmitter } from "fbemitter";
 
-class Events extends EventEmitter {
-	onShapePositionChange() {
-		this.emit('change', (arg) => console.log(arg));
-	}
-}
+const Events = new EventEmitter();
 
 export default Events;
