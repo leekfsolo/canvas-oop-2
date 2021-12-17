@@ -1,5 +1,5 @@
-import { EventEmitter } from "fbemitter";
+// import { EventEmitter } from "fbemitter";
 
-const Events = new EventEmitter();
+// const Events = new EventEmitter();
 
-export default Events;
+// export default Events;

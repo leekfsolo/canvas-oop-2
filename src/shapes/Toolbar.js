@@ -21,8 +21,7 @@ class Toolbar extends Component {
 		textNode.clone().cache();
 		groupNode.clone().cache();
 
-		const stage = this.props.stage;
-		const fromId = groupNode.attrs.id;
+		const { stage, id: fromId } = this.props;
 		let arrow;
 
 		textNode.on('mousedown', () => {
@@ -73,6 +72,7 @@ class Toolbar extends Component {
 					arrow: null
 				});
 				arrow = null;
+				if (!e.target.parent) { return; }
 				const toId = e.target.parent.attrs.id;
 				const count = stage.find('.connector');
 				const id = `connector-${count.length}`;
@@ -87,7 +87,7 @@ class Toolbar extends Component {
 	}
 
 	render() {
-		const { name, data, id } = this.props;
+		const { name, data } = this.props;
 		let width, height, radius;
 		if (name === 'rect') {
 			width = data.width;
@@ -105,7 +105,6 @@ class Toolbar extends Component {
 				x={name === 'rect' ? 0 : -radius}
 				y={name === 'rect' ? -HEIGHT - 10 : -radius * 2 - 10}
 				ref={(n) => this.groupNode = n}
-				id={id}
 			>
 				<Rect
 					width={WIDTH}
